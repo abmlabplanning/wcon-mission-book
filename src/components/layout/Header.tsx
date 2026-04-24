@@ -1,4 +1,10 @@
 import Link from 'next/link'
+import localFont from 'next/font/local'
+
+const mamablock = localFont({
+  src: '../../../../public/fonts/mamablock.ttf',
+  display: 'swap',
+})
 
 interface HeaderProps {
   title?: string
@@ -28,7 +34,7 @@ export function Header({ title, showBack, backHref = '/', rightElement }: Header
             <Link href="/" className="inline-flex items-center gap-1">
               <span className="text-xs font-bold text-[#2D5A27] tracking-widest">W공동체</span>
               <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-bold text-gray-700">CONNECT</span>
+              <span className={`text-xs text-gray-700 ${mamablock.className}`}>CONNECT</span>
             </Link>
           )}
         </div>
