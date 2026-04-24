@@ -69,7 +69,7 @@ export default async function HomePage() {
         </div>
 
         {/* 텍스트 */}
-        <div className="px-4 pb-5 -mt-1">
+        <div className="px-4 pb-5 -mt-1 relative z-10">
           <p className="text-xs font-bold tracking-widest text-[#2D5A27] mb-1">2026 W CONFERENCE</p>
           <h1 className="text-3xl font-black text-[#1A3A17] tracking-tight mb-1">CONNECT</h1>
           <p className="text-xs text-gray-500 mb-4">Mission Book</p>
