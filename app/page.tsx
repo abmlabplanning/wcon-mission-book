@@ -3,6 +3,12 @@ import { Header } from '@/src/components/layout/Header'
 import { GroupCard } from '@/src/components/groups/GroupCard'
 import { GroupScore } from '@/src/types'
 import Link from 'next/link'
+import localFont from 'next/font/local'
+
+const mamablock = localFont({
+  src: '../public/fonts/mamablock.ttf',
+  display: 'swap',
+})
 
 export const revalidate = 30
 
@@ -71,7 +77,7 @@ export default async function HomePage() {
         {/* 텍스트 */}
         <div className="px-4 pb-5 -mt-1 relative z-10">
           <p className="text-xs font-bold tracking-widest text-[#2D5A27] mb-1">2026 W CONFERENCE</p>
-          <h1 className="text-3xl font-black text-[#1A3A17] tracking-tight mb-1">CONNECT</h1>
+          <h1 className={`text-3xl text-[#1A3A17] tracking-tight mb-1 ${mamablock.className}`}>CONNECT</h1>
           <p className="text-xs text-gray-500 mb-4">Mission Book</p>
           <div className="inline-block bg-[#2D5A27]/10 rounded-full px-4 py-1.5">
             <p className="text-xs text-[#2D5A27] font-medium">2026. 4. 24 ~ 26 · 파주 영산수련원</p>
