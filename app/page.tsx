@@ -102,6 +102,18 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* 미션 가이드 */}
+      <section className="px-4 mb-3">
+        <div className="bg-[#2D5A27]/8 border border-[#2D5A27]/20 rounded-xl px-3.5 py-3">
+          <p className="text-xs text-[#2D5A27] leading-relaxed">
+            모든 미션은 사진으로 인증하며, 전체 조 인원 기준 특정 수 이상 사진에 보여져야 합니다.
+          </p>
+          <p className="text-xs text-[#2D5A27]/70 mt-1.5 leading-relaxed">
+            조인원 - 인증인원 &nbsp;|&nbsp; 8인 : 6인 이상 &nbsp;·&nbsp; 7인 : 5인 이상 &nbsp;·&nbsp; 5~6인 : 4인 이상
+          </p>
+        </div>
+      </section>
+
       {/* 조 선택 */}
       <section className="px-4 mb-6">
         <div className="flex items-center justify-between mb-3">
