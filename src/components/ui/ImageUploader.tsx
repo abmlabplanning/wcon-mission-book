@@ -15,16 +15,43 @@ export function ImageUploader({ onImageSelect, previewUrl, disabled }: ImageUplo
   const fileRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(previewUrl || null)
 
-  const handleFile = (file: File) => {
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new window.Image()
+      const objectUrl = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl)
+        const MAX = 1920
+        let { width, height } = img
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round((height * MAX) / width); width = MAX }
+          else { width = Math.round((width * MAX) / height); height = MAX }
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
+        canvas.toBlob(
+          (blob) => resolve(blob ? new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }) : file),
+          'image/jpeg', 0.75
+        )
+      }
+      img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(file) }
+      img.src = objectUrl
+    })
+  }
+
+  const handleFile = async (file: File) => {
     if (!file.type.startsWith('image/')) return
 
+    const compressed = await compressImage(file)
     const reader = new FileReader()
     reader.onloadend = () => {
       const url = reader.result as string
       setPreview(url)
-      onImageSelect(file, url)
+      onImageSelect(compressed, url)
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(compressed)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
