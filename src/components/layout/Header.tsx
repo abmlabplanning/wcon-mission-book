@@ -2,7 +2,7 @@ import Link from 'next/link'
 import localFont from 'next/font/local'
 
 const mamablock = localFont({
-  src: '../../../../public/fonts/mamablock.ttf',
+  src: '../../../public/fonts/mamablock.ttf',
   display: 'swap',
 })
 
