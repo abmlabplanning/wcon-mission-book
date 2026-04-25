@@ -156,6 +156,7 @@ export default function MissionDetailPage() {
           onSuccess={() => {
             fetchData()
           }}
+          existingSubmissionId={isRejected ? submission?.id : undefined}
         />
       )}
     </div>

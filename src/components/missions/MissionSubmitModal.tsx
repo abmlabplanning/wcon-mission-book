@@ -13,6 +13,7 @@ interface MissionSubmitModalProps {
   mission: Mission
   group: Group
   onSuccess: () => void
+  existingSubmissionId?: string
 }
 
 export function MissionSubmitModal({
@@ -21,6 +22,7 @@ export function MissionSubmitModal({
   mission,
   group,
   onSuccess,
+  existingSubmissionId,
 }: MissionSubmitModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
@@ -59,22 +61,27 @@ export function MissionSubmitModal({
 
       const { url, path } = await uploadRes.json()
 
-      // 2. submissions에 INSERT
+      // 2. submissions INSERT or UPDATE (반려 후 재업로드)
       const supabase = createClient()
-      const { error: insertError } = await supabase.from('submissions').insert({
-        group_id: group.id,
-        mission_id: mission.id,
-        image_url: url,
-        image_path: path,
-        status: 'pending',
-        score_awarded: 0,
-      })
-
-      if (insertError) {
-        if (insertError.code === '23505') {
-          throw new Error('이미 이 미션을 인증했어요!')
+      if (existingSubmissionId) {
+        const { error: updateError } = await supabase
+          .from('submissions')
+          .update({ image_url: url, image_path: path, status: 'pending', score_awarded: 0, note: null })
+          .eq('id', existingSubmissionId)
+        if (updateError) throw new Error(updateError.message)
+      } else {
+        const { error: insertError } = await supabase.from('submissions').insert({
+          group_id: group.id,
+          mission_id: mission.id,
+          image_url: url,
+          image_path: path,
+          status: 'pending',
+          score_awarded: 0,
+        })
+        if (insertError) {
+          if (insertError.code === '23505') throw new Error('이미 이 미션을 인증했어요!')
+          throw new Error(insertError.message)
         }
-        throw new Error(insertError.message)
       }
 
       onSuccess()
