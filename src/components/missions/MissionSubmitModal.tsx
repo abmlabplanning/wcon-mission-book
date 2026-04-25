@@ -48,6 +48,7 @@ export function MissionSubmitModal({
       formData.append('file', selectedFile)
       formData.append('groupId', group.id)
       formData.append('missionId', mission.id)
+      if (existingSubmissionId) formData.append('existingSubmissionId', existingSubmissionId)
 
       const uploadRes = await fetch('/api/upload', {
         method: 'POST',
@@ -61,15 +62,9 @@ export function MissionSubmitModal({
 
       const { url, path } = await uploadRes.json()
 
-      // 2. submissions INSERT or UPDATE (반려 후 재업로드)
-      const supabase = createClient()
-      if (existingSubmissionId) {
-        const { error: updateError } = await supabase
-          .from('submissions')
-          .update({ image_url: url, image_path: path, status: 'pending', score_awarded: 0, note: null })
-          .eq('id', existingSubmissionId)
-        if (updateError) throw new Error(updateError.message)
-      } else {
+      // 2. 신규 제출은 클라이언트에서 INSERT (재업로드는 서버에서 처리 완료)
+      if (!existingSubmissionId) {
+        const supabase = createClient()
         const { error: insertError } = await supabase.from('submissions').insert({
           group_id: group.id,
           mission_id: mission.id,

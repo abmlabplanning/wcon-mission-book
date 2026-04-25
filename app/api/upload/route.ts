@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '파일 크기는 3MB 이하여야 합니다' }, { status: 400 })
     }
 
+    const existingSubmissionId = formData.get('existingSubmissionId') as string | null
+
     const ext = file.name.split('.').pop() || 'jpg'
     const path = `${groupId}/${missionId}/${Date.now()}.${ext}`
 
@@ -42,6 +44,17 @@ export async function POST(request: NextRequest) {
     const { data: { publicUrl } } = supabaseAdmin.storage
       .from('mission-images')
       .getPublicUrl(path)
+
+    if (existingSubmissionId) {
+      const { error: updateError } = await supabaseAdmin
+        .from('submissions')
+        .update({ image_url: publicUrl, image_path: path, status: 'pending', score_awarded: 0, note: null })
+        .eq('id', existingSubmissionId)
+      if (updateError) {
+        return NextResponse.json({ error: updateError.message }, { status: 500 })
+      }
+      return NextResponse.json({ url: publicUrl, path, updated: true })
+    }
 
     return NextResponse.json({ url: publicUrl, path })
   } catch {
